@@ -1,0 +1,16 @@
+﻿@page "/"
+@rendermode InteractiveServer
+@using Shared.Components
+<PageTitle>Home</PageTitle>
+
+<ConfirmationComponent @ref="confirmationComponent"/>
+
+<button class="btn btn-primary" @onclick="ShowDialog">Show Dialog</button>
+
+@code{
+    ConfirmationComponent? confirmationComponent;
+    void ShowDialog()
+    {
+        confirmationComponent?.ShowMessage();
+    }
+}

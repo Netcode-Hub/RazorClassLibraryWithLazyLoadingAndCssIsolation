@@ -1,0 +1,41 @@
+﻿@using Microsoft.JSInterop
+@inject IJSRuntime JSRuntime
+@implements IAsyncDisposable
+
+<dialog id="my-dialog" style="border:5px solid green">
+    <p>Custom Message</p>
+
+    <div class="hstack gap-3">
+        <form method="dialog">
+            <button class="btn btn-danger">Cancel</button>
+        </form>
+        <button class="btn btn-success" >Confirm</button>
+    </div>
+</dialog>
+
+@code{
+
+    private Task<IJSObjectReference>? _module;
+    const string ImportPath = "./_content/Shared/dialog.js";
+
+    private Task<IJSObjectReference> Module()
+    {
+        return _module ??= JSRuntime.InvokeAsync<IJSObjectReference>("import", ImportPath).AsTask();
+    }
+
+    public async Task ShowMessage()
+    {
+        // This is where the lazy loading comes in...
+        var module = await Module();
+        await module.InvokeVoidAsync("ShowDialog");
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_module != null)
+        {
+            var module = await _module;
+            await module.DisposeAsync();
+        }
+    }
+}
